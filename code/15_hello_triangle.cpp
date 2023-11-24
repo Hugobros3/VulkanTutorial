@@ -277,10 +277,12 @@ private:
         VkPhysicalDeviceFeatures2 deviceFeatures{};
         deviceFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
         deviceFeatures.features.shaderInt64 = true;
+        deviceFeatures.features.shaderInt16 = true;
 
         VkPhysicalDeviceVulkan12Features vk12features {};
         vk12features.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
         vk12features.bufferDeviceAddress = true;
+        vk12features.shaderInt8 = true;
         vk12features.pNext = nullptr;
         deviceFeatures.pNext = &vk12features;
 
@@ -781,6 +783,16 @@ private:
             SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device);
             swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
         }
+
+        VkPhysicalDeviceFeatures2 features2 = {};
+        features2.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FEATURES_2;
+        VkPhysicalDeviceVulkan12Features features12 = {};
+        features12.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES;
+        features12.pNext = nullptr;
+        features2.pNext = &features12;
+
+        vkGetPhysicalDeviceFeatures2(device, &features2);
+        printf("OK SUPER %d\n", features12.bufferDeviceAddress);
 
         return indices.isComplete() && extensionsSupported && swapChainAdequate;
     }

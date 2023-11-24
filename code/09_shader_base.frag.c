@@ -20,7 +20,26 @@ location(0) input vec3 fragColor;
 
 location(0) output vec4 outColor;
 
+float sqrtf(float) __asm__("shady::prim_op::sqrt");
+float sinf(float) __asm__("shady::prim_op::sin");
+float cosf(float) __asm__("shady::prim_op::cos");
+float fmodf(float, float) __asm__("shady::prim_op::mod");
+#include "ao.c"
+
 fragment_shader void main() {
     outColor = (vec4) { fragColor[0], fragColor[1], fragColor[2], 1.0f };
     //outColor = (vec4) { fragCoord[0] / 1024, fragCoord[1] / 1024, 1.0f, 1.0f };
+      
+    Ctx ctx = get_init_context();
+    init_scene(&ctx);
+    
+    int x = (int) fragCoord.x % 1024;
+    int y = (int) fragCoord.y % 1024;
+    
+    unsigned int out[3]; // = { 55, 0, 0};
+    render_pixel(&ctx, x, y, WIDTH, HEIGHT, NSUBSAMPLES, out);
+    //out[2] = 155;
+    // out[0] = x / 4;
+    // out[1] = y / 4;
+    outColor = (vec4) { ((int) out[0]) / 255.0f, ((int) out[1]) / 255.0f, ((int) out[2]) / 255.0f, 1.0f };
 }
