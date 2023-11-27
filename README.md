@@ -1,3 +1,13 @@
+```
+mkdir code/build
+cd code/build
+cmake ..
+make
+cd 15_hello_triangle
+vcc ../../09_shader_base.frag.c -o shaders/frag.spv --execution-model Fragment --entry-point main --no-dynamic-scheduling --vcc-keep-tmp-file --log-level info --no-physical-global-ptrs --print-generated -Wall
+./15_hello_triangle
+```
+
 Vulkan tutorial
 ===============
 
