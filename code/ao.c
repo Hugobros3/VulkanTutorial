@@ -205,7 +205,7 @@ void render_pixel(Ctx* ctx, int x, int y, int w, int h, int nsubsamples, unsigne
     pixel[1] = 0;
     pixel[2] = 0;
 
-    //ctx->rng = 135477 + (((x) * h) << 0) + y;
+    ctx->rng = 135477 + (((x) * h) << 0) + y;
 
     int u, v;
     for (v = 0; v < nsubsamples; v++) {
