@@ -110,6 +110,7 @@ private:
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
         window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
+        std::timespec_get(&then, TIME_UTC);
     }
 
     void initVulkan() {
@@ -128,10 +129,30 @@ private:
         createSyncObjects();
     }
 
+    std::timespec then;
+    size_t frames = 0;
+
     void mainLoop() {
         while (!glfwWindowShouldClose(window)) {
             glfwPollEvents();
             drawFrame();
+
+            std::timespec now;
+            std::timespec_get(&now, TIME_UTC);
+            long B = 1000000000;
+            auto diff = (now.tv_sec * B + now.tv_nsec) - (then.tv_sec * B + then.tv_nsec);
+            //printf("diff %zu\n", diff);
+            if (diff > B) {
+                double seconds = (double) diff / (double) B;
+                double fps = frames / seconds;
+                std::string title = "";
+                title += "Fps: ";
+                title += std::to_string((int) fps);
+                glfwSetWindowTitle(window, title.c_str());
+                frames = 0;
+                then = now;
+            }
+            frames++;
         }
 
         vkDeviceWaitIdle(device);
