@@ -12,6 +12,7 @@
 #include <limits>
 #include <optional>
 #include <set>
+#include <ctime>
 
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
@@ -873,7 +874,16 @@ private:
         glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
         std::vector<const char*> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
-        extensions.push_back("VK_KHR_portability_enumeration");
+
+        uint32_t pcount;
+        vkEnumerateInstanceExtensionProperties(nullptr, &pcount, nullptr);
+        VkExtensionProperties* props = (VkExtensionProperties*) calloc(sizeof(VkExtensionProperties), pcount);
+        vkEnumerateInstanceExtensionProperties(nullptr, &pcount, props);
+        for (size_t i = 0; i < pcount; i++) {
+            if (strcmp(props[i].extensionName, "VK_KHR_portability_enumeration") == 0)
+                extensions.push_back("VK_KHR_portability_enumeration");
+        }
+        free(props);
 
         if (enableValidationLayers) {
             extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
